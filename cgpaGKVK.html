@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CGPA Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: aquamarine;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #6b5439;
+            text-align: center;
+        }
+
+        h3 {
+            color: #271605;
+            text-align: left;
+        }
+
+        h4,p {
+            text-align: right;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+        }
+
+        #contact{
+            text-align: right;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: inline-block;
+            width: 150px;
+            text-align: right;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100px;
+        }
+
+        select {
+            width: 150px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #courseInput {
+            margin-top: 20px;
+        }
+
+        #result {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+        <div class="container">
+        <h1>CGPA Calculator</h1>
+        <h3><marquee>For GKVK Students</marquee></h3>
+
+        <div class="input-group">
+            <label for="year">Year of Study:</label>
+            <select id="year">
+                <option value="">Enter year</option>
+                <option value="first">First Year</option>
+                <option value="second">Second Year</option>
+                <option value="third">Third Year</option>
+                <option value="fourth">Fourth Year</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="semester">Semester:</label>
+            <select id="semester">
+                <option value="">Enter semester</option>
+                <option value="first">First Semester</option>
+                <option value="second">Second Semester</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="degree">Degree Program:</label>
+            <select id="degree">
+                <option value="">Enter your Degree</option>
+                <option value="BSc">BSc</option>
+                <option value="BTech">BTech</option>
+            </select>
+        </div>
+
+        <div id="courseInput">
+            <!-- Course input fields will be dynamically added here based on user's choices. -->
+        </div>
+
+        <div class="input-group">
+            <label for="pastCGPA">Past CGPA:</label>
+            <input type="number" id="pastCGPA" placeholder="till last sem">
+        </div>
+
+        <div class="input-group">
+            <label for="pastCreditHours">Past Credit Hours:</label>
+            <input type="number" id="pastCreditHours" placeholder="till last sem">
+        </div>
+
+        <button onclick="calculateGPA()">Calculate GPA</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Function to dynamically create course input fields based on user's choices.
+        function createCourseInputs() {
+            const year = document.getElementById("year").value;
+            const degree = document.getElementById("degree").value;
+            const semester = document.getElementById("semester").value;
+            const courseDetails = {
+                "BSc_first_first": [
+                { courseName: "AEC111", creditHours: 2 },
+                { courseName: "AEG111", creditHours: 2 },
+                { courseName: "AGR111", creditHours: 3 },
+                { courseName: "AMB111", creditHours: 2 },
+                { courseName: "BCM111", creditHours: 2 },
+                { courseName: "CSC111", creditHours: 2 },
+                { courseName: "ENG111", creditHours: 2 },
+                { courseName: "FES111", creditHours: 2 },
+                { courseName: "FSN111", creditHours: 2 }
+                ],
+    
+                "BSc_first_second": [
+             { courseName: "AGR121", creditHours: 2 },
+             { courseName: "AGR122", creditHours: 2 },
+             { courseName: "AET121", creditHours: 3 },
+             { courseName: "AEX121", creditHours: 2 },
+             { courseName: "AEC122", creditHours: 2 },
+             { courseName: "GPB121", creditHours: 2 },
+             { courseName: "HRT121", creditHours: 2 },
+             { courseName: "PBT121", creditHours: 3 },
+             { courseName: "SAC121", creditHours: 3 },
+             ],
+    
+               "BSc_second_first": [
+              { courseName: "AET211", creditHours: 3 },
+              { courseName: "AEG211", creditHours: 2 },
+              { courseName: "AEX211", creditHours: 2 },
+              { courseName: "AGR211", creditHours: 3 },
+              { courseName: "CPH211", creditHours: 3 },
+              { courseName: "GPB211", creditHours: 2 },
+              { courseName: "PAT211", creditHours: 3 },
+              { courseName: "SAC211", creditHours: 2 },
+              { courseName: "HRT211", creditHours: 2 },
+              { courseName: "AGR212", creditHours: 1 }
+              ],
+    
+               "BSc_second_second": [
+              { courseName: "GPB221", creditHours: 3 },
+              { courseName: "AGR221", creditHours: 2 },
+              { courseName: "AEG221", creditHours: 2 },
+              { courseName: "AST221", creditHours: 3 },
+              { courseName: "SER221", creditHours: 2 },
+              { courseName: "AMB221", creditHours: 2 },
+              { courseName: "HRT221", creditHours: 2 },
+              { courseName: "PAT221", creditHours: 2 },
+              { courseName: "CPH221", creditHours: 2 },
+              { courseName: "FES221", creditHours: 2 }
+            
+                ],
+    
+                "BSc_third_first": [
+              { courseName: "API311", creditHours: 2 },
+              { courseName: "AET311", creditHours: 2 },
+              { courseName: "AEC311", creditHours: 3 },
+              { courseName: "ASC311", creditHours: 3 },
+              { courseName: "GPB311", creditHours: 2 },
+              { courseName: "SAC311", creditHours: 2 },
+              { courseName: "SST311", creditHours: 2 },
+              { courseName: "HRT311", creditHours: 2 },
+              { courseName: "PAT311", creditHours: 3 },
+              { courseName: "AGR311", creditHours: 1 },
+              { courseName: "AGR312", creditHours: 1 }
+    
+              ],
+    
+              "BSc_third_second": [
+             { courseName: "AGR321", creditHours: 3 },
+             { courseName: "SAC321", creditHours: 3 },
+             { courseName: "AEX321", creditHours: 2 },
+             {  courseName: "AEG321", creditHours: 2 },
+             { courseName: "FSN321", creditHours: 2 },
+             { courseName: "SER321", creditHours: 2 },
+             { courseName: "HRT321", creditHours: 2 },
+             { courseName: "AGR322", creditHours: 2 },
+             { courseName: "SST321", creditHours: 2 },
+             { courseName: "PAT321", creditHours: 2 },
+             { courseName: "GPB321", creditHours: 1 },
+             { courseName: "AEC321", creditHours: 2 }
+             
+              ],
+    
+    
+             "BTech_first_first": [
+             { courseName: "AGR111", creditHours: 3 },
+             { courseName: "AMC117", creditHours: 3 },
+             { courseName: "FPM111", creditHours: 3 },
+             { courseName: "MAT111", creditHours: 3 },
+             { courseName: "PHY111", creditHours: 3 },
+             { courseName: "SAC111", creditHours: 3 }
+            
+             ],
+             "BTech_first_second": [
+             { courseName: "MAT121", creditHours: 3 },
+             { courseName: "SAC122", creditHours: 3 },
+             { courseName: "ENG121", creditHours: 2 },
+             { courseName: "SWE121", creditHours: 2 },
+             { courseName: "FPM121", creditHours: 2 },
+             { courseName: "FPM122", creditHours: 3 },
+             { courseName: "CSC122", creditHours: 3 },
+             { courseName: "AFE121", creditHours: 2 },
+             { courseName: "HRT122", creditHours: 3 }
+             
+              ],
+    
+             "BTech_second_first": [
+             { courseName: "SWE211", creditHours: 2 },
+             { courseName: "AFE211", creditHours: 2 },
+             { courseName: "SWE212", creditHours: 2 },
+             {  courseName: "FPM211", creditHours: 3 },
+             { courseName: "FPM212", creditHours: 2 },
+             { courseName: "AFE212", creditHours: 3 },
+             { courseName: "SWE213", creditHours: 3 },
+             { courseName: "MAT211", creditHours: 3 },
+             { courseName: "AST211", creditHours: 2 }
+            
+             ],
+    
+                "BTech_second_second": [
+              { courseName: "SWE221", creditHours: 2 },
+             { courseName: "swe222", creditHours: 2 },
+             { courseName: "SWE223", creditHours: 3 },
+             { courseName: "SWE3224", creditHours: 3 },
+             { courseName: "FPM222", creditHours: 3 },
+             { courseName: "FPM223", creditHours: 2 },
+             { courseName: "AFE221", creditHours: 2 },
+             { courseName: "FPM221", creditHours: 2 },
+             { courseName: "FES221", creditHours: 2 }
+            
+             ],
+    
+             "BTech_third_first": [
+             { courseName: "AFE311", creditHours: 3 },
+             { courseName: "AFE312", creditHours: 2 },
+             { courseName: "FPM311", creditHours: 3 },
+             { courseName: "FPM312", creditHours: 3 },
+             { courseName: "SWE311", creditHours: 3 },
+             { courseName: "SWE312", creditHours: 2 },
+             { courseName: "SWE313", creditHours: 2 },
+             { courseName: "SWE314", creditHours: 2 },
+             { courseName: "SRE311", creditHours: 5 }
+            
+              ],
+    
+             "BTech_third_second": [
+             { courseName: "AFE321", creditHours: 3 },
+              { courseName: "AFE322", creditHours: 3 },
+             { courseName: "FPM321", creditHours: 2 },
+             { courseName: "FPM322", creditHours: 2 },
+             { courseName: "FPM323", creditHours: 3 },
+             { courseName: "SWE321", creditHours: 3 },
+             { courseName: "SWE322", creditHours: 3 },
+             { courseName: "CSC321", creditHours: 2 }
+             
+         ],
+            };
+    
+            const courses = courseDetails[`${degree}_${year}_${semester}`] || [];
+    
+            let courseInputHTML = "";
+        
+            for (let i = 0; i < courses.length; i++) {
+                const courseName = courses[i].courseName;
+                const creditHours = courses[i].creditHours;
+                
+                courseInputHTML += `
+                    <div class="input-group">
+                        <label for="course${i + 1}">Course ${i + 1}:</label>
+                        <input type="text" id="course${i + 1}" value="${courseName}" readonly>
+                        <input type="number" id="creditHours${i + 1}" value="${creditHours}" placeholder="Credit Hours">
+                        <input type="number" id="marks${i + 1}" placeholder="Marks">
+                    </div>
+                `;
+            }
+    
+            document.getElementById("courseInput").innerHTML = courseInputHTML;
+        }
+    
+        // Function to calculate GPA based on user input.
+        const courseCounts = {
+            "BSc_first_first": 9,
+            "BSc_first_second": 9,
+            "BSc_second_first": 10,
+            "BSc_second_second": 10,
+            "BSc_third_first": 11,
+            "BSc_third_second": 12,
+    
+            "BTech_first_first": 6,
+            "BTech_first_second":9,
+            "BTech_second_first": 9,
+            "BTech_second_second": 9,
+            "BTech_third_first": 9,
+            "BTech_third_second": 8,
+            
+        };
+        
+        // User's selections.
+    
+        
+        function calculateGPA() {
+            const year = document.getElementById("year").value;
+        const degree = document.getElementById("degree").value;
+        const semester = document.getElementById("semester").value;
+        
+        const numCourses = courseCounts[`${degree}_${year}_${semester}`] || 0;
+            let totalGradePoints = 0;
+            let totalCreditHours = 0;
+    
+            for (let i = 1; i <= numCourses; i++) 
+             {
+                const creditHours = parseFloat(document.getElementById(`creditHours${i}`).value);
+                const marks = parseFloat(document.getElementById(`marks${i}`).value);
+    
+                if (!isNaN(creditHours) && !isNaN(marks)) {
+                    const gradePoints = (marks ) * creditHours;
+                    totalGradePoints += gradePoints;
+                    totalCreditHours += creditHours;
+                }
+             }
+    
+             if (totalCreditHours > 0) {
+                const gpa = (totalGradePoints / totalCreditHours).toFixed(2);
+    
+                // Get past CGPA and credit hours.
+                const pastCGPA = parseFloat(document.getElementById("pastCGPA").value) || 0;
+                const pastCreditHours = parseFloat(document.getElementById("pastCreditHours").value) || 0;
+    
+                // Calculate CGPA.
+                const cgpa = (
+                    (pastCGPA * pastCreditHours + gpa * totalCreditHours) /
+                    (pastCreditHours + totalCreditHours)
+                ).toFixed(2);
+    
+                document.getElementById("result").innerHTML = `GPA: ${gpa}<br>CGPA: ${cgpa}`;
+             } else {
+                alert("Please enter valid input for Credit Hours and Marks.");
+             }
+         }
+    
+        // Event listeners to create course input fields when user selects year, semester, and degree.
+        document.getElementById("year").addEventListener("change", createCourseInputs);
+        document.getElementById("semester").addEventListener("change", createCourseInputs);
+        document.getElementById("degree").addEventListener("change", createCourseInputs);
+    
+        // Initial course input fields creation.
+        createCourseInputs();
+    </script>
+
+    <a target="_blank" href="https://uasbangalore.edu.in/index.php/academics-en/uas-examination-center-en">Check your results</a>
+    <section>
+    <a target="_blank" href="https://uasbangalore.edu.in/index.php/college-of-agricultural-engineering-en">about COAE GKVK</a>
+    </section>   
+    <h4>Created by : CHINMOY KALITA</h4>
+    <p>College of Agricultural Engineering, GKVK</p>
+    <div id="contact">
+        <strong>Email:</strong><a target="_blank" href="mailto:chinmoyuas@gmail.com">chinmoyuas@gmail.com</a><br>
+
+        <a target="_blank" href="https://www.linkedin.com/in/chinmoy-kalita-28372b225/details/">LinkedIn</a>
+        <a target="_blank" href="https://github.com/starkCK">Git-Hub</a>
+    </div>
+</body>
+
+
+</html>
